@@ -1,0 +1,14 @@
+{% load static wagtailimages_tags wagtailcore_tags %}
+{% block style %}
+    <link rel="stylesheet" href="{% static 'styles/image_with_text_block.css' %}">
+{% endblock %}
+<div class="iwt {{ value.position }}">
+  <figure class="iwt-media">
+    {% image value.image fill-800x600 as img %}
+    <img src="{{ img.url }}" alt="{{ value.image.title }}">
+    {% if value.caption %}<figcaption>{{ value.caption }}</figcaption>{% endif %}
+  </figure>
+  <div class="iwt-text">
+    {{ value.text|richtext }}
+  </div>
+</div>

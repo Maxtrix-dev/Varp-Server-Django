@@ -1,0 +1,52 @@
+{# index.html #}
+{% load static wagtailuserbar %}
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>
+    {% block title %}
+      {# Prefer Wagtail SEO title, then page title, then a fallback #}
+      {% if page and page.seo_title %}{{ page.seo_title }}
+      {% elif page and page.title %}{{ page.title }}
+      {% else %}VarpServer{% endif %}
+    {% endblock %}
+  </title>
+
+  {# App static CSS (matches your structure: Wagtail/static/styles/...) #}
+  <link rel="stylesheet" href="{% static 'styles/index.css' %}">
+  {% block style %}{% endblock %}
+
+  {# Optional slot for page-specific CSS #}
+  {% block extra_css %}{% endblock %}
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  {# Shows the Wagtail user bar when logged in #}
+  {% wagtailuserbar %}
+
+  <header class="site-header">
+    <nav class="container">
+      <a href="/">Home</a>
+      <span class="spacer"></span>
+      <a href="/admin/">Admin</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <small>&copy; {% now "Y" %} VarpServer</small>
+    </div>
+  </footer>
+
+  {# Optional slot for page scripts #}
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

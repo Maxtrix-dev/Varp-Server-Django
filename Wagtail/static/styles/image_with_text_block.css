@@ -1,0 +1,7 @@
+.iwt { display: grid; gap: 1rem; align-items: start; grid-template-columns: 1fr 1fr; }
+.iwt.left  .iwt-media { order: 0; }
+.iwt.left  .iwt-text  { order: 1; }
+.iwt.right .iwt-media { order: 1; }
+.iwt.right .iwt-text  { order: 0; }
+.iwt-media img { width: 100%; height: auto; display: block; }
+@media (max-width: 820px) { .iwt { grid-template-columns: 1fr; } }

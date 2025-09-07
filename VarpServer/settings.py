@@ -10,10 +10,25 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
+import environ
+env = environ.Env()
+environ.Env.read_env()
+
+WAGTAILADMIN_BASE_URL = env("WAGTAILADMIN_BASE_URL", default="http://127.0.0.1:8000")
+WAGTAIL_SITE_NAME=env("WAGTAIL_SITE_NAME",default="Varp")
+ENV = os.getenv("DJANGO_ENV", "development")
+
+IS_PROD = ENV == "production"
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+WAGTAILEMBEDS_FINDERS = [
+    {"class": "wagtail.embeds.finders.oembed"},
+    #{"class": "wagtail.embeds.finders.facebook", "app_id": "YOUR_APP_ID", "app_secret": "YOUR_APP_SECRET"},
+]
 
 
 # Quick-start development settings - unsuitable for production
@@ -25,7 +40,7 @@ SECRET_KEY = 'django-insecure-xxg1acgp2430b5fhel7_49e-k@9-0+b55eh5bn3-y*rxo&$=dj
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1", "0.0.0.0", "localhost"]
 
 
 # Application definition
@@ -37,6 +52,23 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+     # Wagtail deps
+    "taggit",
+    "modelcluster",
+
+    # Wagtail
+    "wagtail.contrib.forms",
+    "wagtail.contrib.redirects",
+    "wagtail.embeds",
+    "wagtail.sites",
+    "wagtail.users",
+    "wagtail.snippets",
+    "wagtail.documents",
+    "wagtail.images",
+    "wagtail.search",
+    "wagtail.admin",
+    "wagtail",
+    "Wagtail"
 ]
 
 MIDDLEWARE = [
@@ -47,7 +79,23 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'wagtail.contrib.redirects.middleware.RedirectMiddleware'
 ]
+
+
+if IS_PROD:
+    # Where collectstatic will put the files (served by Nginx or WhiteNoise)
+    STATIC_ROOT = BASE_DIR / "staticfiles"
+
+    # (Optional but convenient) serve static via WhiteNoise
+    MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
+    STORAGES = {
+        "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+        "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    }
+else:
+    # Only for local dev if you keep extra project-level assets
+    STATICFILES_DIRS = [BASE_DIR / "static"]
 
 ROOT_URLCONF = 'VarpServer.urls'
 
